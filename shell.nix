@@ -1,14 +1,16 @@
 with import <nixpkgs> {};
 with pkgs.lib.strings;
 let
-  jupyter = import (builtins.fetchGit {
-    url = https://github.com/tweag/jupyterWith;
-    rev = "";
-  }) {};
+#  jupyter = import (builtins.fetchGit {
+#    url = https://github.com/tweag/jupyterWith;
+#    rev = "";
+#  }) {};
+
+  jupyter = import (./jupyterWith/default.nix) {};
 
   juniper = jupyter.kernels.juniperWith {
     # Identifier that will appear on the Jupyter interface.
-    name = "Juniper";
+    name = "JuniperKernel";
     # Libraries (R packages) to be available to the kernel.
     packages = p: with p; [
       pacman
@@ -32,8 +34,8 @@ let
   };
 
   iPython = jupyter.kernels.iPythonWith {
-    name = "python";
-    packages = p: with p; [ numpy ];
+    name = "IPythonKernel";
+    packages = p: with p; [ numpy ipython_sql ];
   };
 
   iHaskell = jupyter.kernels.iHaskellWith {
