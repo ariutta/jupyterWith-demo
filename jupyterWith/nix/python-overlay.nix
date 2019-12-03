@@ -60,6 +60,40 @@ let
         maintainers = [];
       };
     };
+
+    ipython_sql = pythonPackages.buildPythonPackage rec {
+      pname = "ipython-sql";
+      version = "0.3.9";
+      name = "${pname}-${version}";
+
+      src = pythonPackages.fetchPypi {
+        inherit pname version;
+        sha256 = "1vf3dhvdynd3wiwsw3a67fshy06r6d17qb1wns7rvf1q3wvzd1vi";
+      };
+
+      propagatedBuildInputs = with pythonPackages; [
+        prettytable
+        ipython
+        sqlalchemy
+        sqlparse
+        six
+        ipython_genutils
+      ];
+
+      doCheck = false;
+
+      meta = with pkgs.stdenv.lib; {
+        description = "Introduces a %sql (or %%sql) magic.";
+        longDescription = ''
+          Introduces a %sql (or %%sql) magic.
+          Connect to a database, using SQLAlchemy connect strings, then issue SQL
+          commands within IPython or IPython Notebook.
+          '';
+        homepage = "https://pypi.org/project/ipython-sql/";
+        license = licenses.mit;
+        maintainers = with maintainers; [ ];
+      };
+    };
   };
 
 in
