@@ -33,8 +33,7 @@ let
 
   iPythonWithPackages = jupyter.kernels.iPythonWith {
     name = "IPythonKernel";
-    #packages = p: with p; [ numpy ipython_sql jupyterlab_sql ];
-    packages = p: with p; [ numpy ipython_sql ];
+    packages = p: with p; [ numpy ipython_sql jupyterlab_sql ];
   };
 
 
@@ -45,7 +44,8 @@ let
 
   jupyterEnvironment =
     jupyter.jupyterlabWith {
-      kernels = [ iPythonWithPackages iHaskell juniper ];
+      #kernels = [ iPythonWithPackages iHaskell juniper ];
+      kernels = [ iPythonWithPackages juniper ];
       ## The generated directory goes here
       directory = ./jupyterlab;
     };
