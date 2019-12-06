@@ -48,6 +48,7 @@ let
       kernels = [ iPythonWithPackages juniper ];
       ## The generated directory goes here
       directory = ./jupyterlab;
+      extraPackages = p: [p.ps];
     };
 in
   jupyterEnvironment.env

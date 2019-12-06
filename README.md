@@ -5,20 +5,35 @@
 
 ## Install
 
+First install direnv and allow it for this directory. Then `cd` to this
+directory and install the jupyterlab extensions:
+
 ```
-nix-shell
 generate-directory jupyterlab_vim
-# ctrl-d to exit shell
 ```
 
 ## Use
 
-```
-nix-shell --command "jupyter lab"
-```
-
 For Python, use kernel `Python3 - IPythonKernel`.
 For R, use kernel `R - JuniperKernel`.
+
+### Local Launch
+
+`cd` to this directory and run:
+
+```
+jupyter lab
+```
+
+TODO: can I just run `./launch`?
+
+### Remote Launch
+
+```
+~/launch code/jupyterlab-demo
+```
+
+If `~/launch` doesn't exist on your local machine, copy it from this directory.
 
 ## Notes
 
