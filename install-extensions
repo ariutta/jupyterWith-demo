@@ -1,0 +1,34 @@
+if [ ! -d jupyterlab-sql ]; then
+  git clone https://github.com/pbugnion/jupyterlab-sql.git
+fi
+
+# the server extension
+
+jupyter serverextension enable --py jupyterlab_sql
+
+# the lab extensions
+
+mkdir -p "$JUPYTERLAB_DIR"/staging
+chmod -R +w "$JUPYTERLAB_DIR"
+cp jupyterlab-sql/yarn.lock "$JUPYTERLAB_DIR"/staging/yarn.lock
+chmod +w "$JUPYTERLAB_DIR"/staging/yarn.lock
+
+jupyter labextension link ./jupyterlab-sql --app-dir=$JUPYTERLAB_DIR
+
+chmod -R +w "$JUPYTERLAB_DIR"
+
+jupyter labextension install jupyterlab_vim --app-dir=$JUPYTERLAB_DIR
+#jupyter labextension install jupyterlab_vim --app-dir=$JUPYTERLAB_DIR --no-build
+chmod -R +w "$JUPYTERLAB_DIR"
+
+jupyter lab build --app-dir="$JUPYTERLAB_DIR"
+
+chmod -R +w "$JUPYTERLAB_DIR"
+
+# TODO: why do I need to build twice for this to work?
+jupyter lab build --app-dir="$JUPYTERLAB_DIR"
+
+echo "Need sudo to remove $JUPYTERLAB_DIR/staging."
+sudo rm -rf "$JUPYTERLAB_DIR"/staging
+
+jupyter labextension list --app-dir="$JUPYTERLAB_DIR"

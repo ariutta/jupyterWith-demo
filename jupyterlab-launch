@@ -9,8 +9,7 @@ HELP_MSG="jupyterlab-launch <target>
       jupyterlab-launch nixos.gladstone.internal:code/jupyterlab-demo"
 
 server_pid=""
-tunnel_pid=""
-
+tunnel_pid="" 
 # Based on http://linuxcommand.org/lc3_wss0140.php
 # and https://codeinthehole.com/tips/bash-error-reporting/
 PROGNAME=$(basename "$0")
@@ -30,6 +29,9 @@ cleanup() {
   fi
   if [[ -n "$tunnel_pid" ]] && [[ -n "$(ps -p $tunnel_pid | grep $tunnel_pid)" ]]; then
     kill -9 "$tunnel_pid"
+  fi
+  if [[ -n "$db_tunnel_pid" ]] && [[ -n "$(ps -p $db_tunnel_pid | grep $db_tunnel_pid)" ]]; then
+    kill -9 "$db_tunnel_pid"
   fi
 
   cleanup_complete=1
@@ -101,6 +103,8 @@ else
   TARGET_DIR="$1"
 fi
 
+DB_SERVER_ADDRESS="wikipathways-workspace.gladstone.internal"
+
 TARGET_DIR=${TARGET_DIR:-'./'}
 
 if [[ -z "$JUPYTER_SERVER_ADDRESS" ]]; then
@@ -143,6 +147,25 @@ else
   echo "Here's the server output:"
   cat "$OUTPUT_FILE"
 fi
+
+## TODO: get the db tunnel working. The following code doesn't work (at least for a local jupyter server):
+#echo "Starting db tunnel..."
+## access via URI like postgres://localhost:3333/pfocr_plus
+#if [ $SERVER_IS_REMOTE ]; then
+#  echo "TODO: look into how to create db tunnel"
+#  # maybe it's something like this?
+#  nohup ssh -N -L 3333:"$JUPYTER_SERVER_ADDRESS":5432 "$DB_SERVER_ADDRESS" > /dev/null &
+#else
+#  nohup ssh -N -L 3333:localhost:5432 "$DB_SERVER_ADDRESS" > /dev/null &
+#fi
+#
+# I'd like to do this the same way as I connect to a remote jupyter server,
+# but that isn't working.
+echo "Ctrl-d to close db tunnel"
+ssh -L 3333:localhost:5432 wikipathways-workspace.gladstone.internal
+
+db_tunnel_pid=$!
+sleep 3
 
 echo ""
 read -rp "To quit, hit Enter"
