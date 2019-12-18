@@ -1,92 +1,101 @@
 with import <nixpkgs> { overlays = [ (import ./python-overlay.nix) ]; };
 with pkgs.lib.strings;
 let
+  # just jupyter server extensions, but it's
+  # OK if the server extension has a lab extension.
+  serverextensions = p: with p; [
+    jupyterlab_sql
+  ];
 
-  # cloned my fork of jupyterWith as a sibling of this directory
-  jupyter = import (../jupyterWith/default.nix) {
+  # clone my fork of jupyterWith as a sibling of this directory
+  jupyter = import (
+    ../jupyterWith/default.nix
+#  jupyter = import (
+#    builtins.fetchGit {
+#      url = https://github.com/ariutta/jupyterWith;
+#      ref = "proposals";
+#    }
+  ) {
     directory = "./share-jupyter";
-    # TODO: would the format below be better? regardless, it doesn't work right now:
-#    serverextensions = with pkgs.python3Packages; [
-#      psycopg2
-#      jupyterlab_sql
-#    ];
-    # so I had to use this:
-    serverextensions = [
-      "psycopg2"
-      "jupyterlab_sql"
-    ];
+    serverextensions = serverextensions;
     overlays = [ (import ./python-overlay.nix) ];
   };
 
-#  jupyter = import (builtins.fetchGit {
-#    url = https://github.com/tweag/jupyterWith;
-#    rev = "";
-#  }) { overlays = [ (import ./python-overlay.nix) ]; };
-#  #}) {};
+  #########################
+  # R
+  #########################
+
+  myRPackages = p: with p; [
+    pacman
+    dplyr
+    ggplot2
+    knitr
+    purrr
+    readr
+    stringr
+    tidyr
+  ];
+
+  myR = [ R ] ++ (myRPackages pkgs.rPackages);
 
   juniper = jupyter.kernels.juniperWith {
     # Identifier that will appear on the Jupyter interface.
     name = "JuniperKernel";
     # Libraries (R packages) to be available to the kernel.
-    packages = p: with p; [
-      pacman
-      ggplot2
-      xts
-      DOSE
-      GO_db
-      GSEABase
-      org_Hs_eg_db ## Human-specific
-      clusterProfiler
-      plyr  ## for ldply
-      dplyr
-      tidyr
-      magrittr
-      stringr
-      rWikiPathways
-    ];
+    packages = myRPackages;
     # Optional definition of `rPackages` to be used.
     # Useful for overlaying packages.
-    rPackages = pkgs.rPackages;
+    # TODO: why not just do this in overlays above?
+    #rPackages = pkgs.rPackages;
   };
 
-  mypython = pkgs.python3.withPackages(ps: with ps; [
+  #########################
+  # Python
+  #########################
+
+  myPythonPackages = (p: (with p; [
     numpy
+
+    # TODO: ipython_sql isn't a serverextension, but it IS specifically for
+    # augmenting jupyter. Where should we specify it?
+    # sql magic for jupyterlab
     ipython_sql
-    psycopg2
-    jupyterlab_sql
-  ]);
+  ]) ++
+  # TODO: it would be nice not have to specify serverextensions here, but the
+  # current jupyterLab code needs it to be specified both here and above.
+  (serverextensions p));
+
+  myPython = pkgs.python3.withPackages(myPythonPackages);
 
   iPythonWithPackages = jupyter.kernels.iPythonWith {
     name = "IPythonKernel";
 
-    # TODO: I shouldn't need any of these if I'm using overlays, right?
+    # TODO: I shouldn't need to set this if I'm using overlays, right?
     #python3 = pkgs.python3Packages;
-    #python3 = pkgs.python3;
-    #python3 = mypython;
 
-    packages = p: with p; [
-      # sql magic for jupyterlab
-      ipython_sql
-
-      # for jupyterlab-sql.
-      # TODO: do these need to be specified here, or just in serverextensions above?
-      psycopg2
-      jupyterlab_sql
-
-      # python dependencies not specifically for jupyterlab
-      numpy
-    ];
+    packages = myPythonPackages;
   };
 
   jupyterEnvironment =
     jupyter.jupyterlabWith {
       kernels = [ iPythonWithPackages juniper ];
+
       ## The generated directory goes here
       directory = ./share-jupyter;
       extraPackages = p: [
+        # needed by jupyterlab-launch
         p.ps
         p.lsof
-        mypython
+
+        # needed to make server extensions work
+        myPython
+
+        # TODO: do we still need these for lab extensions?
+        nodejs
+        yarn
+
+        # optionals below
+        myR
       ];
     };
 in

@@ -1,8 +1,8 @@
 _: pkgs:
 let
   packageOverrides = selfPythonPackages: pythonPackages: {
-    jupyterlab_sql = pythonPackages.callPackage ./jupyterlab-sql/default.nix {};
-    ipython_sql = pythonPackages.callPackage ./ipython-sql/default.nix {};
+    jupyterlab_sql = pythonPackages.callPackage ./nixpkgs/jupyterlab-sql/default.nix {};
+    ipython_sql = pythonPackages.callPackage ./nixpkgs/ipython-sql/default.nix {};
   };
 
 in

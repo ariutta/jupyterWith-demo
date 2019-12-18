@@ -1,4 +1,4 @@
-{ stdenv, python3 }:
+{ stdenv, python3, pkgs }:
 
 let
   inherit (python3.pkgs) buildPythonPackage fetchPypi;
@@ -16,10 +16,14 @@ buildPythonPackage rec {
 
   buildInputs = with python3.pkgs; [
     pytest
+  ] ++ [
+    pkgs.nodejs
+    pkgs.yarn
   ];
 
   propagatedBuildInputs = with python3.pkgs; [
     jupyterlab
+    psycopg2
     sqlalchemy
     jsonschema
   ];

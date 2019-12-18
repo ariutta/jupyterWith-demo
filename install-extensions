@@ -30,7 +30,7 @@ chmod -R +w "$JUPYTERLAB_DIR"
 # TODO: why do I need to build twice for this to work?
 jupyter lab build --app-dir="$JUPYTERLAB_DIR"
 
-echo "Need sudo to remove $JUPYTERLAB_DIR/staging."
+#chmod -R u+w "$JUPYTERLAB_DIR"/staging
 sudo rm -rf "$JUPYTERLAB_DIR"/staging
 
 jupyter labextension list --app-dir="$JUPYTERLAB_DIR"
