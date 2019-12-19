@@ -1,5 +1,4 @@
 with import <nixpkgs> { overlays = [ (import ./python-overlay.nix) ]; };
-#1040
 with pkgs.lib.strings;
 let
   # This property is just for jupyter server extensions, but it is
@@ -7,6 +6,8 @@ let
   serverextensions = p: with p; [
     jupyterlab_sql
     jupytext
+    # look into getting jupyterlab-lsp working:
+    # https://github.com/krassowski/jupyterlab-lsp
   ];
 
   # TODO: specify a lab extensions property
@@ -14,20 +15,23 @@ let
   jupyter = import (
 
 #    # for dev, clone a jupyterWith fork as a sibling of demo directory
-    ../jupyterWith/default.nix
+#    ../jupyterWith/default.nix
 
     # for "prod"
-#    builtins.fetchGit {
-#      url = https://github.com/ariutta/jupyterWith;
-#      ref = "proposals";
-#    }
+    builtins.fetchGit {
+      url = https://github.com/ariutta/jupyterWith;
+      ref = "proposals";
+    }
 
   ) {
     directory = "./share-jupyter";
     labextensions = [
       "jupyterlab_vim"
+
+      # TODO: do we need both of these for integrating bokeh and jupyter?
       "@jupyter-widgets/jupyterlab-manager"
       "@bokeh/jupyter_bokeh"
+
     ];
     serverextensions = serverextensions;
     overlays = [ (import ./python-overlay.nix) ];
@@ -67,6 +71,7 @@ let
 
   myPythonPackages = (p: (with p; [
     numpy
+    pandas
 
     # TODO: the following are not serverextensions, but they ARE specifically
     # intended for augmenting jupyter. Where should we specify them?
@@ -79,6 +84,7 @@ let
 
     bokeh
     jupyter_bokeh
+    nbconvert
   ]) ++
   # TODO: it would be nice not have to specify serverextensions here, but the
   # current jupyterLab code needs it to be specified both here and above.
@@ -115,6 +121,13 @@ let
 
         # optionals below
         myR
+
+        # for nbconvert
+        pandoc
+        # see https://github.com/jupyter/nbconvert/issues/808
+        #tectonic
+        # more info: https://nixos.wiki/wiki/TexLive
+        texlive.combined.scheme-full
       ];
     };
 in

@@ -32,6 +32,16 @@ For R, use kernel `R - JuniperKernel`.
 
 If `~/jupyterlab-launch/jupyterlab-launch` doesn't exist on your local machine, copy it from this directory.
 
+## Extensions
+
+### nbconvert
+
+Convert ipynb to other formats, e.g.:
+
+```
+jupyter nbconvert --to pdf python_demo.ipynb 
+```
+
 ## Notes
 
 Need to set `update = FALSE` in this line for it to work with Nix:

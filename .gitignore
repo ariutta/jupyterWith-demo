@@ -1,15 +1,8 @@
 *.ipynb
-/jupyterlab/
-/jupyterlab-sql/
 .ipynb_checkpoints/
+/jupyterlab/
+/__pycache__/
 .direnv
-wikipathways-20191110-gmt-Homo_sapiens.gmt
-OMIM_Disease
-wp-gmt-overlaps.R
 /share-jupyter/
-CORUM
 nohup.out
-uninstall_jupyterlab_sql.sh
-untitled.md
-wikipathways-20191210-gmt-Homo_sapiens.gmt
 log_lines.html
