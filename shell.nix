@@ -7,14 +7,18 @@ let
     jupyterlab_sql
   ];
 
-  # clone my fork of jupyterWith as a sibling of this directory
   jupyter = import (
-    ../jupyterWith/default.nix
-#  jupyter = import (
-#    builtins.fetchGit {
-#      url = https://github.com/ariutta/jupyterWith;
-#      ref = "proposals";
-#    }
+
+#    # for dev, clone a jupyterWith fork as a sibling of demo directory
+#    ../jupyterWith/default.nix
+
+    # for "prod"
+    builtins.fetchGit {
+      url = https://github.com/ariutta/jupyterWith;
+      ref = "proposals";
+      #rev = "1ef866b1842fae7cfafcdd5eb2206657ed83f0e0";
+    }
+
   ) {
     directory = "./share-jupyter";
     serverextensions = serverextensions;
