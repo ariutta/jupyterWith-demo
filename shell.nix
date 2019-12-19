@@ -1,10 +1,12 @@
 with import <nixpkgs> { overlays = [ (import ./python-overlay.nix) ]; };
+#1040
 with pkgs.lib.strings;
 let
   # This property is just for jupyter server extensions, but it is
   # OK if the server extension includes a lab extension.
   serverextensions = p: with p; [
     jupyterlab_sql
+    jupytext
   ];
 
   # TODO: specify a lab extensions property
@@ -12,16 +14,21 @@ let
   jupyter = import (
 
 #    # for dev, clone a jupyterWith fork as a sibling of demo directory
-#    ../jupyterWith/default.nix
+    ../jupyterWith/default.nix
 
     # for "prod"
-    builtins.fetchGit {
-      url = https://github.com/ariutta/jupyterWith;
-      ref = "proposals";
-    }
+#    builtins.fetchGit {
+#      url = https://github.com/ariutta/jupyterWith;
+#      ref = "proposals";
+#    }
 
   ) {
     directory = "./share-jupyter";
+    labextensions = [
+      "jupyterlab_vim"
+      "@jupyter-widgets/jupyterlab-manager"
+      "@bokeh/jupyter_bokeh"
+    ];
     serverextensions = serverextensions;
     overlays = [ (import ./python-overlay.nix) ];
   };
@@ -61,12 +68,17 @@ let
   myPythonPackages = (p: (with p; [
     numpy
 
-    # TODO: ipython_sql isn't a serverextension, but it IS specifically for
-    # augmenting jupyter. Where should we specify it?
+    # TODO: the following are not serverextensions, but they ARE specifically
+    # intended for augmenting jupyter. Where should we specify them?
+
     # sql magic for jupyterlab
     ipython_sql
-    # same thing for nb_black
+
+    # TODO: compare nb_black with https://github.com/ryantam626/jupyterlab_code_formatter
     nb_black
+
+    bokeh
+    jupyter_bokeh
   ]) ++
   # TODO: it would be nice not have to specify serverextensions here, but the
   # current jupyterLab code needs it to be specified both here and above.

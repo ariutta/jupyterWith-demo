@@ -9,7 +9,7 @@ References:
 
 ## Install
 
-First install direnv. Then `cd` to this directory and allow direnv.
+First install direnv. Then `cd` to this directory and run `direnv allow`.
 
 ## Use
 
