@@ -1,11 +1,13 @@
 with import <nixpkgs> { overlays = [ (import ./python-overlay.nix) ]; };
 with pkgs.lib.strings;
 let
-  # just jupyter server extensions, but it's
-  # OK if the server extension has a lab extension.
+  # This property is just for jupyter server extensions, but it is
+  # OK if the server extension includes a lab extension.
   serverextensions = p: with p; [
     jupyterlab_sql
   ];
+
+  # TODO: specify a lab extensions property
 
   jupyter = import (
 
@@ -16,7 +18,6 @@ let
     builtins.fetchGit {
       url = https://github.com/ariutta/jupyterWith;
       ref = "proposals";
-      #rev = "1ef866b1842fae7cfafcdd5eb2206657ed83f0e0";
     }
 
   ) {
