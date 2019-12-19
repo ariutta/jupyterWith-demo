@@ -9,12 +9,7 @@ References:
 
 ## Install
 
-First install direnv. Then `cd` to this directory, allow direnv, and install
-extensions for jupyter lab and server:
-
-```
-./install-extensions
-```
+First install direnv. Then `cd` to this directory and allow direnv.
 
 ## Use
 
@@ -26,16 +21,16 @@ For R, use kernel `R - JuniperKernel`.
 `cd` to this directory and run:
 
 ```
-./jupyterlab-launch
+./jupyterlab-launch/jupyterlab-launch
 ```
 
 ### Remote Launch
 
 ```
-~/jupyterlab-launch nixos.gladstone.internal:code/jupyterlab-demo
+~/jupyterlab-launch/jupyterlab-launch nixos.gladstone.internal:code/jupyterlab-demo
 ```
 
-If `~/jupyterlab-launch` doesn't exist on your local machine, copy it from this directory.
+If `~/jupyterlab-launch/jupyterlab-launch` doesn't exist on your local machine, copy it from this directory.
 
 ## Notes
 
@@ -43,4 +38,23 @@ Need to set `update = FALSE` in this line for it to work with Nix:
 
 ```R
 p_load(load.libs, update = FALSE, character.only = TRUE)
+```
+
+## Sync jupyterlab-launch
+
+Long-term, some of these packages may be included in Nix packages. But for the packages not yet included,
+you can use a subtree to pull them into your own project:
+
+Setup the `jupyterlab-launch` subtree, if not done already:
+
+```
+git remote add jupyterlab-launch git@github.com:ariutta/jupyterlab-launch.git
+git subtree add --prefix jupyterlab-launch jupyterlab-launch master --squash
+```
+
+Sync subtree repo:
+
+```
+git subtree pull --prefix jupyterlab-launch jupyterlab-launch master --squash
+git subtree push --prefix jupyterlab-launch jupyterlab-launch master
 ```
