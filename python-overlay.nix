@@ -3,6 +3,7 @@ let
   packageOverrides = selfPythonPackages: pythonPackages: {
     jupyterlab_sql = pythonPackages.callPackage ./nixpkgs/jupyterlab-sql/default.nix {};
     ipython_sql = pythonPackages.callPackage ./nixpkgs/ipython-sql/default.nix {};
+    nb_black = pythonPackages.callPackage ./nixpkgs/nb_black/default.nix {};
   };
 
 in

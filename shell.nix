@@ -65,6 +65,8 @@ let
     # augmenting jupyter. Where should we specify it?
     # sql magic for jupyterlab
     ipython_sql
+    # same thing for nb_black
+    nb_black
   ]) ++
   # TODO: it would be nice not have to specify serverextensions here, but the
   # current jupyterLab code needs it to be specified both here and above.
