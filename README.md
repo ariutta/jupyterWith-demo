@@ -6,7 +6,8 @@ This is a demo of using my forked version of [jupyterWith](https://github.com/ar
 
 ### Base
 
-First install [jupyterlab-launch](github.com/ariutta/jupyterlab-launch) (add it to `PATH` on client/local machine) and direnv (on server/local machine). Then `cd` to this directory and run `direnv allow`.
+1. Install direnv on the machine acting as your Jupyter server. If your local machine isn't doing a dual role as both server and client, install [jupyterlab-launch](github.com/ariutta/jupyterlab-launch) on your client, being sure to add it to `PATH`.
+2. Clone this repo onto your server, `cd` to where you cloned it and run `direnv allow`.
 
 ### Extensions
 

@@ -10,6 +10,13 @@ let
     # https://github.com/krassowski/jupyterlab-lsp
   ];
 
+  mynixpkgs = import (fetchFromGitHub {
+    owner = "ariutta";
+    repo = "mynixpkgs";
+    rev = "aca57c0";
+    sha256 = "1ab3izpdfiylzdxq1hpgljbcmdvdwnch8mxcd6ybx4yz8hlp8gm0";
+  });
+
   # TODO: specify a lab extensions property
 
   jupyter = import (
@@ -24,7 +31,8 @@ let
     }
 
   ) {
-    directory = "./share-jupyter";
+    # this corresponds to notebook_dir (impure)
+    directory = toString ./.;
     labextensions = [
       "jupyterlab_vim"
 
@@ -85,6 +93,7 @@ let
     bokeh
     jupyter_bokeh
     nbconvert
+    seaborn
   ]) ++
   # TODO: it would be nice not have to specify serverextensions here, but the
   # current jupyterLab code needs it to be specified both here and above.
@@ -105,8 +114,6 @@ let
     jupyter.jupyterlabWith {
       kernels = [ iPythonWithPackages juniper ];
 
-      ## The generated directory goes here
-      directory = ./share-jupyter;
       extraPackages = p: [
         # needed by jupyterlab-launch
         p.ps
@@ -128,7 +135,12 @@ let
         #tectonic
         # more info: https://nixos.wiki/wiki/TexLive
         texlive.combined.scheme-full
+        mynixpkgs.jupyterlab-connect
       ];
     };
 in
-  jupyterEnvironment.env
+  jupyterEnvironment.env.overrideAttrs (oldAttrs: {
+    shellHook = oldAttrs.shellHook + ''
+    . "${mynixpkgs.jupyterlab-connect}"/share/bash-completion/completions/jupyterlab-connect.bash
+    '';
+  })
